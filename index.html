@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoLabel Control Panel</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loadingScreen" class="screen">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Checking authorization...</p>
+    </div>
+  </div>
+
+  <div id="authScreen" class="screen hidden">
+    <div class="auth-container">
+      <div class="auth-header">
+        <svg class="icon-music" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+        <div>
+          <div class="brand-name">NoLabel</div>
+          <div class="brand-subtitle">Control Panel</div>
+        </div>
+      </div>
+
+      <h2 class="auth-title">Moderator Login</h2>
+
+      <form id="authForm" class="auth-form">
+        <div class="form-group">
+          <label for="authEmail">Email</label>
+          <input type="email" id="authEmail" required>
+        </div>
+
+        <div class="form-group">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" required>
+        </div>
+
+        <div id="authError" class="error-message hidden"></div>
+
+        <button type="submit" id="authSubmitBtn" class="btn-primary">
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="accessDeniedScreen" class="screen hidden">
+    <div class="access-denied-container">
+      <svg class="icon-shield-large" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      <h2>Access Denied</h2>
+      <p>You don't have moderator privileges.</p>
+      <button id="signOutBtn" class="btn-secondary">Sign Out</button>
+    </div>
+  </div>
+
+  <div id="controlPanel" class="screen hidden">
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <div class="sidebar-header">
+          <svg class="icon-music" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+          <div>
+            <div class="brand-name">NoLabel</div>
+            <div class="brand-subtitle">Control Panel</div>
+          </div>
+        </div>
+        
+        <div class="mod-info-card" id="modInfoCard">
+          <div class="mod-info-label">Moderator</div>
+          <div class="mod-artist-name" id="modArtistName">Loading...</div>
+          <div class="mod-user-id" id="modUserId">Loading ID...</div>
+        </div>
+        <nav class="sidebar-nav">
+          <div class="nav-section">Overview</div>
+          <button class="nav-item active">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Queues
+          </button>
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="content-header">
+        <div class="header-top">
+          <h1>Pending Submissions</h1>
+
+          <div class="tabs">
+            <button class="tab" data-tab="all">All Tracks</button>
+            <button class="tab active" data-tab="pending">Pending</button>
+            <button class="tab" data-tab="approved">Approved</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-label">All Tracks</div>
+          <div class="stat-value" id="statAll">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Review</div>
+          <div class="stat-value" id="statPending">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Approved</div>
+          <div class="stat-value" id="statApproved">0</div>
+        </div>
+      </div>
+
+      <div class="songs-container">
+        <div id="songsLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading submissions...</p>
+        </div>
+
+        <div id="songsList" class="songs-list hidden">
+          <div class="songs-table">
+            <div class="table-header">
+              <div class="col-date">Submitted</div>
+              <div class="col-details">Details</div>
+            </div>
+
+            <div id="songsTableBody" class="table-body">
+              </div>
+          </div>
+
+          <div id="emptyState" class="empty-state hidden">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <p>No pending submissions</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="bottomPlayer" class="bottom-player hidden">
+      <div class="player-track-info">
+        <img id="playerCover" src="https://via.placeholder.com/48" alt="Track cover" class="player-cover">
+        <div class="player-info">
+          <div id="playerTitle" class="player-title">No track playing</div>
+          <div id="playerArtist" class="player-artist">---</div>
+        </div>
+      </div>
+      
+      <div class="player-controls">
+        <button id="playerPlayPause" class="player-btn player-btn-main">
+          <svg class="player-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg class="player-pause-icon hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+        <button id="playerStop" class="player-btn" title="Stop">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="6" width="12" height="12"></rect>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="player-progress-section">
+        <span id="playerCurrentTime" class="player-time">0:00</span>
+        <div class="player-progress-bar">
+          <div id="playerProgressFill" class="player-progress-fill"></div>
+        </div>
+        <span id="playerDuration" class="player-time">0:00</span>
+      </div>
+      
+      <div class="player-volume">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
