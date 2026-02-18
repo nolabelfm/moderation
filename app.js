@@ -613,6 +613,16 @@ async function approveTrack(pendingId) {
       });
     
     if (insertError) throw insertError;
+
+    // Also insert into tracks table for play count tracking
+    const { error: tracksInsertError } = await window.supabase
+      .from('tracks')
+      .insert({
+        id: audioId,
+        play_count: 0
+      });
+
+    if (tracksInsertError) throw tracksInsertError;
     
     // Delete from pending_tracks
     const { error: deleteError } = await window.supabase
